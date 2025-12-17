@@ -185,6 +185,29 @@ fn usage() {
     );
 }
 
+fn daemonize() {
+    unsafe {
+        let ret = libc::fork();
+        if ret == -1 {
+            panic!("Unable to do first fork!");
+        }
+        if ret != 0 {
+            std::process::exit(0);
+        }
+        let ret = libc::setsid();
+        if ret == -1 {
+            panic!("Unable to setsid!");
+        }
+        let ret = libc::fork();
+        if ret == -1 {
+            std::process::exit(1);
+        }
+        if ret != 0 {
+            std::process::exit(0);
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 5 {
@@ -197,7 +220,8 @@ fn main() {
     let interface = args[4].clone();
 
     let mut info = SysInfo::new(destination, namespace, filesystem, interface);
-
+    info.send();
+    daemonize();
     loop {
         info.send();
         thread::sleep(Duration::from_secs(60));
