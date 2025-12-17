@@ -142,15 +142,15 @@ impl SysInfo {
     /// <https://github.com/statsd/statsd/blob/master/docs/metric_types.md>
     /// Everything we report is a gauge
     fn serialize(&self) -> String {
+        let prefix = format!("{}.{}", self.namespace, self.hostname);
         format!(
-            "{}\n{}\n{}\n{}\n{}\n{}\n{}\n",
-            format!("{}.hostname:{}|g", self.namespace, self.hostname),
-            format!("{}.net-rx:{}|g", self.namespace, self.net_rx),
-            format!("{}.net-tx:{}|g", self.namespace, self.net_tx),
-            format!("{}.uptime:{}|g", self.namespace, self.uptime),
-            format!("{}.availmem:{}|g", self.namespace, self.avail_mem),
-            format!("{}.diskfree:{}|g", self.namespace, self.disk_free),
-            format!("{}.load:{}|g", self.namespace, self.load),
+            "{}\n{}\n{}\n{}\n{}\n{}\n",
+            format!("{}.net-rx:{}|g", prefix, self.net_rx),
+            format!("{}.net-tx:{}|g", prefix, self.net_tx),
+            format!("{}.uptime:{}|g", prefix, self.uptime),
+            format!("{}.availmem:{}|g", prefix, self.avail_mem),
+            format!("{}.diskfree:{}|g", prefix, self.disk_free),
+            format!("{}.load:{}|g", prefix, self.load),
         )
     }
 
